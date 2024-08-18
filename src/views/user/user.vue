@@ -62,12 +62,14 @@
           <img :id="'avatar-' + scope.row.id" class="table-avatar">
         </template>
       </el-table-column>
+      <!-- sortable="custom"使该列可以被排序 -->
       <el-table-column prop="userName" label="用户名" sortable="custom" />
       <el-table-column prop="trueName" label="真实姓名" sortable="custom" />
       <el-table-column prop="roleList" label="角色" sortable="custom" />
       <el-table-column prop="createTime" label="创建时间" sortable="custom" />
       <el-table-column prop="status" label="是否激活" sortable="custom" width="100">
         <template slot-scope="scope">
+          <!-- :active-value="1" 默认激活状态为1 -->
           <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleSwitch(scope.row)" />
         </template>
       </el-table-column>
@@ -80,6 +82,7 @@
     </el-table>
 
     <!-- 分页 -->
+    <!-- el-pagination分页器 -->
     <el-pagination
       class="pagination"
       :current-page.sync="tableData.pageNum"
@@ -90,6 +93,11 @@
       @size-change="getUserList"
       @current-change="getUserList"
     />
+    <!-- :current-page.sync默认跳转为第二页 -->
+    <!-- :page-sizes=每一页呈现行数 -->
+    <!-- :page-size.sync默认每一页呈现行数 -->
+    <!-- layout分页器布局 -->
+    <!-- total页面总数？？？？？ -->
   </div>
 </template>
 <script>
@@ -107,6 +115,14 @@ export default {
           trueName: '张三',
           roleList: [],
           createTime: '14:15',
+          status: true
+        },
+        {
+          id: 2,
+          userName: 'lisi',
+          trueName: '李四',
+          roleList: [],
+          createTime: '14:16',
           status: true
         }],
         selection: '',
