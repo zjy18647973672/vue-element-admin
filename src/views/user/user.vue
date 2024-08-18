@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard-container">
+
     <!-- 用户查找操作栏 -->
     <el-form :model="tableData" label-width="80px" :inline="true" size="small">
       <!-- :model等价于v-bind:modol，是把父组件的数据传至子组件；v-model是父子组件数据的双向绑定 -->
@@ -44,12 +45,13 @@
     </div>
 
     <!-- 用户列表 -->
-    <!-- data表示表格数据（与tableData.list绑定），selection-change表示表格的批量操作，sort-change表示表格的排序操作 -->
     <el-table
       :data="tableData.list"
+      stripe
       @selection-change="val => tableData.selection = val"
       @sort-change="handleSortChange"
     >
+      <!-- data表示表格数据（与tableData.list绑定），selection-change表示表格的批量操作，sort-change表示表格的排序操作，stripe设置样式带斑马纹 -->
       <el-table-column type="index" width="60" />
       <!-- type="index"显示该行的序号 -->
       <el-table-column type="selection" width="50" />
@@ -82,12 +84,6 @@
     </el-table>
 
     <!-- 分页 -->
-    <!-- el-pagination分页器 -->
-    <!-- :current-page.sync默认跳转为第二页 -->
-    <!-- :page-sizes=每一页呈现行数 -->
-    <!-- :page-size.sync默认每一页呈现行数 -->
-    <!-- layout分页器布局 -->
-    <!-- total页面总数？？？？？ -->
     <el-pagination
       class="pagination"
       :current-page.sync="tableData.pageNum"
@@ -98,8 +94,17 @@
       @size-change="getUserList"
       @current-change="getUserList"
     />
+    <!-- el-pagination分页器 -->
+    <!-- :current-page.sync默认跳转为第二页 -->
+    <!-- :page-sizes=每一页呈现行数 -->
+    <!-- :page-size.sync默认每一页呈现行数 -->
+    <!-- layout分页器布局 -->
+    <!-- total页面总数 -->
+
     <!-- 用户编辑/创建窗口 -->
     <el-dialog class="user-edit-dialog" :title="userEditForm.id ? '用户编辑' : '新增用户'" :visible.sync="userEditDialogVisible" width="50%" top="8vh">
+      <!-- :title="userEditForm.id ? '用户编辑' : '新增用户'" 对当前表单的id进行判断，若存在，则为新增用户，否则为用户编辑 -->
+      <!-- :visible.sync="userEditDialogVisible"默认用户编辑/创建窗口是否呈现与userEditDialogVisible的真假有关 --><!-- ref获取userEditForm组件的引用 -->
       <el-form
         ref="userEditForm"
         status-icon
@@ -107,6 +112,7 @@
         label-width="80px"
         :rules="userEditForm.id ? userUpdateRules : userCreateRules"
       >
+        <!-- :rules表单的验证规则：编辑用户的规则or新增用户的规则 -->
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="userEditForm.userName" />
         </el-form-item>
@@ -119,6 +125,7 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="userEditForm.email" />
         </el-form-item>
+        <!-- radio-group多选项圆形选择栏 -->
         <el-form-item label="性别">
           <el-radio-group v-model="userEditForm.gender">
             <el-radio :label="0">男</el-radio>
@@ -135,6 +142,7 @@
           <el-input v-model="userEditForm.phone" />
         </el-form-item>
         <el-form-item label="角色" prop="roleIds">
+          <!-- select下拉多选框 -->
           <el-select v-model="userEditForm.roleIds" multiple placeholder="请选择角色">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
@@ -158,8 +166,43 @@
         <el-button type="primary" @click="addOrUpdateUser">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 用户导入窗口 -->
+    <el-dialog class="user-import-dialog" :title="'导入用户'" :visible.sync="userImportDialogVisible" width="80%" top="8vh">
+      <!-- 下载示例文件与上传文件按钮 -->
+      <div>
+        <el-button type="primary" icon="el-icon-download" size="mini" @click="handleCreateUser">下载示例文件</el-button>
+        <el-button type="primary" size="mini" @click="handleBatchDelete">点击上传excel</el-button>
+      </div>
+
+      <!-- 文件内容 -->
+      <el-table
+        :data="importtableData.list"
+        border
+      >
+        <el-table-column type="selection" width="40" />
+        <el-table-column type="id" label="序号" width="70" />
+        <el-table-column prop="userName" label="用户名" width="100" />
+        <el-table-column prop="trueName" label="真实姓名" width="100" />
+        <el-table-column prop="password" label="密码" width="130" />
+        <el-table-column prop="email" label="邮箱" width="150" />
+        <el-table-column prop="gender" label="性别" width="60" />
+        <el-table-column prop="address" label="地址" width="100" />
+        <el-table-column prop="introduction" label="简介" width="150" />
+        <el-table-column prop="phone" label="电话" width="130" />
+        <el-table-column prop="roleIds" label="角色" width="150" />
+      </el-table>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="userImportDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="importAllUsers">导入全部</el-button>
+        <el-button type="primary" @click="importChosenUsers">导入已选择用户</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
+
 <script>
 export default {
   name: 'Users',
@@ -190,6 +233,20 @@ export default {
         pageSize: 10,
         total: 1
       },
+      importtableData: {
+        list: [{
+          id: '',
+          userName: '',
+          trueName: '',
+          password: '',
+          email: '',
+          gender: '',
+          address: '',
+          introduction: '',
+          phone: '',
+          roleIds: ''
+        }]
+      },
       userEditForm: {
         id: '',
         userName: '',
@@ -202,37 +259,77 @@ export default {
         phone: '',
         roleIds: []
       },
+      userImportForm: {
+        id: '',
+        index: '',
+        userName: '',
+        trueName: '',
+        password: '',
+        email: '',
+        gender: '',
+        address: '',
+        introduction: '',
+        phone: '',
+        roleIds: []
+      },
       userEditDialogVisible: false,
-      allRoles: []
+      userImportDialogVisible: false,
+      allRoles: [] // 角色列表
     }
   },
   methods: {
+    // 获取用户列表
     getUserList() {
 
     },
+    // 新增用户：使新增用户窗口出现
     handleCreateUser() {
       this.userEditDialogVisible = true
     },
+    // 批量删除用户
     handleBatchDelete() {
-
+      // 将tableData.seletion中的id提取出来，传递给handleDelete
     },
+    // 导入用户
     handleImportUser() {
-
+      this.userImportDialogVisible = true
     },
-    // 切换用户性别
+    // 切换用户账号激活状态
     handleSwitch() {
 
     },
+    // 编辑用户信息：将当前行传递进来，遍历表单，将数据传递进去
     handleEdit(row) {
-
+      for (const key in this.userEditForm) {
+        this.userEditForm[key] = row[key]
+      }
+      this.userEditDialogVisible = true
     },
-    handleDelete(row) {
-
+    // 删除用户信息（单个）
+    handleDelete(userIds) {
+      this.$confirm('此操作将永久删除该用户，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 对接删除用户接口
+      })
     },
+    // 重置
     resetQuery() {
 
     },
+    // 对列进行排序
     handleSortChange() {
+
+    },
+    addOrUpdateUser() {
+
+    },
+    importAllUsers() {
+
+    },
+    importChosenUsers() {
 
     }
   }

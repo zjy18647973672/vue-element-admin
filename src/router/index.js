@@ -94,7 +94,7 @@ export const asyncRoutes = [
   {
     path: '/user',
     component: Layout,
-    redirect: '/user/user',
+    redirect: '/user/user', // 重定向
     meta: {
       title: '用户管理',
       icon: 'user'
@@ -129,7 +129,7 @@ export const asyncRoutes = [
         path: 'statistics',
         component: () => import('@/views/statistics/index'),
         name: 'Statistics',
-        meta: { title: '数据统计', affix: true }
+        meta: { title: '数据统计', icon: 'list', affix: true }
       }
     ]
   },
