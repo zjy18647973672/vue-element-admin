@@ -1,22 +1,26 @@
 <template>
   <div class="dashboard-container">
     <!-- 用户查找操作栏 -->
-    <!-- :model等价于v-bind:modol，是把父组件的数据传至子组件；v-model是父子组件数据的双向绑定 -->
     <el-form :model="tableData" label-width="80px" :inline="true" size="small">
+      <!-- :model等价于v-bind:modol，是把父组件的数据传至子组件；v-model是父子组件数据的双向绑定 -->
+      <!-- :inline使该form表格在一行内呈现 -->
       <el-form-item label="用户名称">
         <el-input
           v-model="tableData.name"
           placeholder="请输入用户名称"
           clearable=""
         />
+        <!-- clearable表示一键清楚文本选项 -->
       </el-form-item>
       <el-form-item label="创建时间">
+        <!-- 时间选择器data-picker -->
         <el-date-picker
           v-model="tableData.minCreateTime"
           type="datetime"
           placeholder="起始时间"
           class="data-picker"
         />
+        <!-- type="datatime"表示即有日期，也有时间 -->
         <el-date-picker
           v-model="tableData.maxCreateTime"
           type="datetime"
@@ -25,6 +29,8 @@
         />
       </el-form-item>
       <el-form-item>
+        <!-- 搜素与重置按钮 -->
+        <!-- button中type表示按钮类型，icon控制图标 -->
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getUserList">搜素</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -32,23 +38,25 @@
 
     <!-- 用户增删操作栏 -->
     <div>
-      <!-- el-button的type控制颜色，icon控制图标 -->
       <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleCreateUser">新增</el-button>
       <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="handleBatchDelete">删除</el-button>
       <el-button type="info" plain icon="el-icon-upload2" size="mini" @click="handleImportUser">导入</el-button>
     </div>
 
     <!-- 用户列表 -->
-    <!-- data表示表格数据，selection-change表示表格的批量操作，sort-change表示表格的排序操作 -->
+    <!-- data表示表格数据（与tableData.list绑定），selection-change表示表格的批量操作，sort-change表示表格的排序操作 -->
     <el-table
       :data="tableData.list"
       @selection-change="val => tableData.selection = val"
       @sort-change="handleSortChange"
     >
       <el-table-column type="index" width="60" />
+      <!-- type="index"显示该行的序号 -->
       <el-table-column type="selection" width="50" />
+      <!-- type="selection"显示该行是否被勾选 -->
       <el-table-column width="50">
         <template slot-scope="scope">
+          <!-- slot-scope="scope"可以添加相关属性值 -->
           <!-- <img class="table-avatar" :src="scope.row.avatar" /> -->
           <!-- 直接使用:src绑定会导致刷新失败 -->
           <img :id="'avatar-' + scope.row.id" class="table-avatar">
