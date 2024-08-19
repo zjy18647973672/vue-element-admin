@@ -38,7 +38,7 @@
     </el-form>
 
     <!-- 用户增删操作栏 -->
-    <div>
+    <div id="div_button">
       <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleCreateUser">新增</el-button>
       <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="handleBatchDelete">删除</el-button>
       <el-button type="info" plain icon="el-icon-upload2" size="mini" @click="handleImportUser">导入</el-button>
@@ -102,7 +102,7 @@
     <!-- total页面总数 -->
 
     <!-- 用户编辑/创建窗口 -->
-    <el-dialog class="user-edit-dialog" :title="userEditForm.id ? '用户编辑' : '新增用户'" :visible.sync="userEditDialogVisible" width="50%" top="8vh">
+    <el-dialog class="user-edit-dialog" :title="userEditForm.id ? ' 用户编辑' : ' 新增用户'" :visible.sync="userEditDialogVisible" width="50%" top="8vh">
       <!-- :title="userEditForm.id ? '用户编辑' : '新增用户'" 对当前表单的id进行判断，若存在，则为新增用户，否则为用户编辑 -->
       <!-- :visible.sync="userEditDialogVisible"默认用户编辑/创建窗口是否呈现与userEditDialogVisible的真假有关 --><!-- ref获取userEditForm组件的引用 -->
       <el-form
@@ -168,7 +168,7 @@
     </el-dialog>
 
     <!-- 用户导入窗口 -->
-    <el-dialog class="user-import-dialog" :title="'导入用户'" :visible.sync="userImportDialogVisible" width="80%" top="8vh">
+    <el-dialog class="user-import-dialog" :title="' 导入用户'" :visible.sync="userImportDialogVisible" width="80%" top="8vh">
       <!-- 下载示例文件与上传文件按钮 -->
       <div>
         <el-button type="primary" icon="el-icon-download" size="mini" @click="handleCreateUser">下载示例文件</el-button>
@@ -335,10 +335,24 @@ export default {
   }
 }
 </script>
+
 <!-- scoped：当前样式只对本页面生效 -->
 <style scoped>
+.el-form {
+  margin-top: 10px;
+}
 .data-picker {
   margin-right: 10px;
   width: 160px;
+}
+.el-table {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.el-pagination {
+  margin-left: 10px;
+}
+#div_button {
+  margin-left: 10px;
 }
 </style>
