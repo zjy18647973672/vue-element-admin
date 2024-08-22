@@ -166,4 +166,7 @@ export default {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+.el-pagination {
+  margin-left: 10px;
+}
 </style>

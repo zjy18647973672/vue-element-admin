@@ -110,7 +110,7 @@
         status-icon
         :model="userEditForm"
         label-width="80px"
-        :rules="userEditForm.id ? userUpdateRules : userCreateRules"
+        :rules="userEditForm.id ? userUpdateRules : usercreateRules"
       >
         <!-- :rules表单的验证规则：编辑用户的规则or新增用户的规则 -->
         <el-form-item label="用户名" prop="userName">
@@ -274,10 +274,58 @@ export default {
       },
       userEditDialogVisible: false,
       userImportDialogVisible: false,
-      allRoles: [] // 角色列表
+      allRoles: [], // 角色列表
+      usercreateRules: {
+        userName: [{ required: true, trigger: 'blur', validator: this.userNameValidator }],
+        password: [{ required: true, trigger: 'change', validator: this.passwordValidator }],
+        roleIds: [{ required: true, trigger: 'change', validator: this.roleValidator }]
+      },
+      userUpdateRules: {
+        userName: [{ required: true, trigger: 'blur', validator: this.userNameValidator }],
+        password: [{ trigger: 'change', validator: this.passwordValidator }],
+        roleIds: [{ required: true, trigger: 'change', validator: this.roleValidator }]
+      },
+      currentEditRow: null
     }
   },
   methods: {
+    /**
+     * 用户名验证函数
+     */
+    userNameValidator(rule, value, callback) {
+      if (!value) {
+        callback(new Error('请输入用户名'))
+      } else if (this.userEditForm.id && value === this.currentEditRow.userName) {
+        callback()
+      } else {
+        // 使用接口判断用户名是否重名
+        // checkUserName(value).then(res => {
+        //   callback(res.data.data ? new Error('用户名已存在') : undefined)
+        // })
+      }
+    },
+    /**
+     * 密码验证函数
+     */
+    passwordValidator(rule, value, callback) {
+      if (!value && this.userEditForm.id) {
+        callback()
+      } else if (!value || value.length < 6) {
+        callback(new Error('密码长度不能小于6位'))
+      } else {
+        callback()
+      }
+    },
+    /**
+     * 角色验证函数
+     */
+    roleValidator(rule, value, callback) {
+      if (!value || value.length === 0) {
+        callback(new Error('角色不能为空'))
+      } else {
+        callback()
+      }
+    },
     /**
      *  获取用户列表
      */
@@ -359,8 +407,15 @@ export default {
     handleSortChange() {
 
     },
+    /**
+     * 添加或更新用户
+     */
     addOrUpdateUser() {
-
+      this.$refs.userEditForm.validate(valid => {
+        if (valid) {
+          // 如果验证通过就调用添加或者更新用户的接口
+        }
+      })
     },
     importAllUsers() {
 

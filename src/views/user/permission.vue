@@ -3,6 +3,7 @@
     <h2> Permission </h2>
   </div>
 </template>
+
 <script>
 export default {
   name: 'Permission',
