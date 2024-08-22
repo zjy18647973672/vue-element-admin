@@ -22,3 +22,18 @@ export function logout() {
     method: 'post'
   })
 }
+
+/**
+ * 获取用户列表
+ * @param {object} data {userName, minCreateTime, maxCreateTime, orderBy, orderMethod, pageNum, pageSize}
+ * @returns users
+ */
+export function getUsers(data) {
+  const params = new URLSearchParams(data)
+  // orderBy由驼峰转为下划线
+  if (params.has('orderBy')) {
+    params.set('orderBy', params.get('orderBy').replace(/([A-Z])/g, '_$1').toLowerCase())
+  }
+  const url = `user-api/users?${params.tostring()}`
+  return request.get(url)
+}

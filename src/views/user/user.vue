@@ -204,6 +204,7 @@
 </template>
 
 <script>
+import * as UserApi from '@/api/user'
 export default {
   name: 'Users',
   data() {
@@ -234,18 +235,7 @@ export default {
         total: 1
       },
       importtableData: {
-        list: [{
-          id: '',
-          userName: '',
-          trueName: '',
-          password: '',
-          email: '',
-          gender: '',
-          address: '',
-          introduction: '',
-          phone: '',
-          roleIds: ''
-        }]
+        list: []
       },
       userEditForm: {
         id: '',
@@ -287,6 +277,9 @@ export default {
       },
       currentEditRow: null
     }
+  },
+  mounted() {
+    this.getUserList()
   },
   methods: {
     /**
@@ -330,7 +323,16 @@ export default {
      *  获取用户列表
      */
     getUserList() {
-
+      UserApi.getUsers(this.tableData).then(res => {
+        this.tableData.list = res.data.data.content
+        this.tableData.total = res.data.data.totalElements
+        // 更新头像
+        // this.$nextTick(() => {
+        //   this.tableData.list.forEach(row => {
+        //     this.getAvatar(row.id, row)
+        //   })
+        // })
+      })
     },
     /**
      * 新增用户：使新增用户窗口出现
