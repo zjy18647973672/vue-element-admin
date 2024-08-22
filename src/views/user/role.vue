@@ -40,6 +40,40 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分页 -->
+    <el-pagination
+      class="pagination"
+      :current-page.sync="tableData.currentPage"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size.sync="tableData.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="tableData.total"
+      @size-change="startPagination"
+      @current-change="startPagination"
+    />
+
+    <!-- 用户编辑/创建窗口 -->
+    <el-dialog class="role-edit-dialog" :title="roleEditForm.id ? ' 新增角色' : ' 角色编辑'" :visible.sync="roleEditDialogVisible" width="50%" top="8vh">
+      <el-form
+        ref="roleEditForm"
+        :model="roleEditForm"
+        label-width="80px"
+        :rules="roleEditFormRules"
+      >
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="roleEditForm.Name" />
+        </el-form-item>
+        <el-form-item label="角色描述" prop="description">
+          <el-input v-model="roleEditForm.description" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="roleEditDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addOrUpdateRole">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
