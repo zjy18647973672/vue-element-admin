@@ -213,22 +213,7 @@ export default {
         name: '',
         minCreateTimer: '',
         maxCreateTime: '',
-        list: [{
-          id: 1,
-          userName: 'zhangsan',
-          trueName: '张三',
-          roleList: [],
-          createTime: '14:15',
-          status: true
-        },
-        {
-          id: 2,
-          userName: 'lisi',
-          trueName: '李四',
-          roleList: [],
-          createTime: '14:16',
-          status: true
-        }],
+        list: [],
         selection: '',
         pageNum: 1,
         pageSize: 10,
