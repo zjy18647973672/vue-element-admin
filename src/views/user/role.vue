@@ -24,12 +24,11 @@
     <el-table
       :data="tableData.list"
       stripe
-      @selection-change="val => tableData.selection = val"
       @sort-change="handleSortChange"
     >
       <!-- data表示表格数据（与tableData.list绑定），selection-change表示表格的批量操作，sort-change表示表格的排序操作，stripe设置样式带斑马纹 -->
       <el-table-column type="index" width="60" />
-      <el-table-column type="selection" width="50" />
+      <el-table-column prop="name" label="角色名称" sortable="custom" />
       <el-table-column prop="description" label="角色描述" sortable="custom" />
       <el-table-column prop="createTime" label="创建时间" sortable="custom" />
       <el-table-column prop="updateTime" label="更新时间" sortable="custom" />
@@ -90,11 +89,69 @@ export default {
           createTime: '',
           updateTime: ''
         }],
-        selection: '',
-        pageNum: 1,
+        currentPage: 1,
         pageSize: 10,
         total: 1
+      },
+      roleEditForm: {
+        id: '',
+        name: '',
+        description: ''
+      },
+      roleEditFormRules: {
+        name: [
+          { required: true, trigger: 'blur', validator: this.validateName }
+        ]
+      },
+      roleEditDialogVisible: false
+    }
+  },
+  methods: {
+    /**
+     * 新增角色
+     */
+    handleCreateRole() {
+      // 使角色编辑窗口的所有内容为空
+      for (const key in this.roleEditForm) {
+        this.roleEditForm[key] = ''
       }
+      // 打开角色编辑窗口
+      this.openRoleEditDialog()
+    },
+    /**
+     * 打开角色编辑窗口
+     */
+    openRoleEditDialog() {
+      // 使窗口可见
+      this.roleEditDialogVisible = true
+      // 清除表单的验证？
+      this.$nextTick(() => {
+        this.$refs.roleEditForm.clearable()
+      })
+    },
+    /**
+     * 删除角色
+     * @param {Number} id
+     */
+    handleDelete(id) {
+      this.$confirm('此操作将永久删除该用户，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 对接删除用户接口
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
+    },
+    /**
+     * 编辑角色
+     */
+    handleEdit(row) {
+      for (const key in this.roleEditForm) {
+        this.roleEditForm[key] = row[key]
+      }
+      this.openRoleEditDialog()
     }
   }
 }

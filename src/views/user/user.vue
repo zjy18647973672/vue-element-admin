@@ -278,34 +278,64 @@ export default {
     }
   },
   methods: {
-    // 获取用户列表
+    /**
+     *  获取用户列表
+     */
     getUserList() {
 
     },
-    // 新增用户：使新增用户窗口出现
+    /**
+     * 新增用户：使新增用户窗口出现
+     */
     handleCreateUser() {
-      this.userEditDialogVisible = true
+      // 使角色编辑窗口的所有内容为空
+      for (const key in this.userEditForm) {
+        this.userEditForm[key] = ''
+      }
+      // 打开角色编辑窗口
+      this.openUserEditDialog()
     },
-    // 批量删除用户
+    /**
+     * 打开用户编辑窗口
+     */
+    openUserEditDialog() {
+      // 使窗口可见
+      this.userEditDialogVisible = true
+      // 清除表单的验证？
+      this.$nextTick(() => {
+        this.$refs.userEditForm.clearable()
+      })
+    },
+    /**
+     * 批量删除用户
+     */
     handleBatchDelete() {
       // 将tableData.seletion中的id提取出来，传递给handleDelete
     },
-    // 导入用户
+    /**
+     * 导入用户
+     */
     handleImportUser() {
       this.userImportDialogVisible = true
     },
-    // 切换用户账号激活状态
+    /**
+     * 切换用户账号激活状态
+     */
     handleSwitch() {
 
     },
-    // 编辑用户信息：将当前行传递进来，遍历表单，将数据传递进去
+    /**
+     * 编辑用户信息：将当前行传递进来，遍历表单，将数据传递进去
+     */
     handleEdit(row) {
       for (const key in this.userEditForm) {
         this.userEditForm[key] = row[key]
       }
-      this.userEditDialogVisible = true
+      this.openUserEditDialog()
     },
-    // 删除用户信息（单个）
+    /**
+     * 删除用户信息（单个）
+     */
     handleDelete(userIds) {
       this.$confirm('此操作将永久删除该用户，是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -313,13 +343,19 @@ export default {
         type: 'warning'
       }).then(() => {
         // 对接删除用户接口
+      }).catch(() => {
+        this.$message.info('已取消删除')
       })
     },
-    // 重置
+    /**
+     * 重置
+     */
     resetQuery() {
 
     },
-    // 对列进行排序
+    /**
+     * 对列进行排序
+     */
     handleSortChange() {
 
     },
