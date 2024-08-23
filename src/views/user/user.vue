@@ -204,7 +204,7 @@
 </template>
 
 <script>
-import * as UserApi from '@/api/user'
+// import * as UserApi from '@/api/user'
 import axios from '@/axios'
 export default {
   name: 'Users',
@@ -265,14 +265,7 @@ export default {
     }
   },
   mounted() {
-    // this.getUserList()
-    axios.get('/users/getAll')
-      .then(response => {
-        this.tableData.list = response.data.data
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    this.getUserList()
   },
   methods: {
     /**
@@ -316,16 +309,25 @@ export default {
      *  获取用户列表
      */
     getUserList() {
-      UserApi.getUsers(this.tableData).then(res => {
-        this.tableData.list = res.data.data.content
-        this.tableData.total = res.data.data.totalElements
-        // 更新头像
-        // this.$nextTick(() => {
-        //   this.tableData.list.forEach(row => {
-        //     this.getAvatar(row.id, row)
-        //   })
-        // })
-      })
+      // 学姐方法
+      // UserApi.getUsers(this.tableData).then(res => {
+      //   this.tableData.list = res.data.data.content
+      //   this.tableData.total = res.data.data.totalElements
+      //   // 更新头像
+      //   // this.$nextTick(() => {
+      //   //   this.tableData.list.forEach(row => {
+      //   //     this.getAvatar(row.id, row)
+      //   //   })
+      //   // })
+      // })
+      axios.get('/users/getAll')
+        .then(response => {
+          this.tableData.list = response.data.data
+          this.tableData.list.reverse()
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     /**
      * 新增用户：使新增用户窗口出现
