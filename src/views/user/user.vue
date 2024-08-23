@@ -175,7 +175,7 @@
         <el-button type="primary" size="mini" @click="handleBatchDelete">点击上传excel</el-button>
       </div>
 
-      <!-- 文件内容 -->
+      <!-- 导入文件内容 -->
       <el-table
         :data="importtableData.list"
         border
@@ -434,11 +434,14 @@ export default {
   width: 160px;
 }
 .el-table {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  /* margin-top: 10px;
+  margin-bottom: 10px; */
+  margin: 10px 5px;
 }
 .el-pagination {
-  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  margin: 10px ;
 }
 #div_button {
   margin-left: 10px;
