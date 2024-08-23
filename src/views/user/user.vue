@@ -205,6 +205,7 @@
 
 <script>
 import * as UserApi from '@/api/user'
+import axios from '@/axios'
 export default {
   name: 'Users',
   data() {
@@ -264,7 +265,14 @@ export default {
     }
   },
   mounted() {
-    this.getUserList()
+    // this.getUserList()
+    axios.get('/users/getAll')
+      .then(response => {
+        this.tableData.list = response.data.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
   },
   methods: {
     /**
