@@ -265,6 +265,7 @@ export default {
     }
   },
   mounted() {
+    // 打开网页时默认每页数据数与当前页面
     this.getUserList()
   },
   methods: {
@@ -320,13 +321,21 @@ export default {
       //   //   })
       //   // })
       // })
-      axios.get('/users/getAll')
+      axios.get('/users/getUserList', {
+        params: {
+          pageNum: this.tableData.pageNum, // 指定检索的页码
+          pageSize: this.tableData.pageSize // 指定每页数据数
+        }
+      })
         .then(response => {
-          this.tableData.list = response.data.data
-          this.tableData.list.reverse()
+          // 连接后端数据，返回列表值，总数，页面数据数，当前页码
+          this.tableData.list = response.data.data.records
+          this.tableData.total = response.data.data.total
+          this.tableData.size = response.data.data.size
+          this.tableData.currentPage = response.data.data.currentPage
         })
         .catch(error => {
-          console.log(error)
+          console.log(error = '从后端获取数据失败')
         })
     },
     /**
