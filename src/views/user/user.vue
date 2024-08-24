@@ -250,7 +250,16 @@ export default {
       },
       userEditDialogVisible: false,
       userImportDialogVisible: false,
-      allRoles: [], // 角色列表
+      allRoles: [
+        {
+          id: 1,
+          name: 'jues'
+        },
+        {
+          id: 2,
+          name: 'jues1111111111111111e'
+        }
+      ], // 系统内角色列表
       usercreateRules: {
         userName: [{ required: true, trigger: 'blur', validator: this.userNameValidator }],
         password: [{ required: true, trigger: 'change', validator: this.passwordValidator }],
@@ -265,10 +274,21 @@ export default {
     }
   },
   mounted() {
-    // 打开网页时默认每页数据数与当前页面
+    // 打开网页时默认获取用户列表
     this.getUserList()
+    this.getAllRoles()
   },
   methods: {
+    getAllRoles() {
+      axios.get('/roles/getRoleList')
+        .then(response => {
+          // 连接后端数据，返回列表值，总数，页面数据数，当前页码
+          this.allRoles = response.data.data
+        })
+        .catch(error => {
+          console.log(error = '从后端获取角色数据失败')
+        })
+    },
     /**
      * 用户名验证函数
      */
@@ -335,7 +355,7 @@ export default {
           this.tableData.currentPage = response.data.data.currentPage
         })
         .catch(error => {
-          console.log(error = '从后端获取数据失败')
+          console.log(error = '从后端获取用户数据失败')
         })
     },
     /**
