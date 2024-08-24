@@ -206,6 +206,7 @@
 <script>
 // import * as UserApi from '@/api/user'
 import axios from '@/axios'
+import md5 from 'js-md5'
 export default {
   name: 'Users',
   data() {
@@ -331,6 +332,7 @@ export default {
         // checkUserName(value).then(res => {
         //   callback(res.data.data ? new Error('用户名已存在') : undefined)
         // })
+        callback() // 需判断重名！！！
       }
     },
     /**
@@ -374,7 +376,7 @@ export default {
       this.userEditDialogVisible = true
       // 清除表单的验证？
       this.$nextTick(() => {
-        this.$refs.userEditForm.clearable()
+        this.$refs.userEditForm.clearValidate() // Clear form validation
       })
     },
     /**
@@ -406,7 +408,7 @@ export default {
       }
       this.userEditForm.roleIds = row.roleList ? row.roleList.map(item => {
         const role = this.allRoles.find(role => role.name === item)
-        return role && role.id
+        return role && role.name
       }) : []
       this.userEditForm.roleIds.filter(id => id)
       this.openUserEditDialog()
@@ -432,6 +434,7 @@ export default {
       this.tableData.name = ''
       this.tableData.minCreateTime = ''
       this.tableData.maxCreateTime = ''
+      this.getUserList()
     },
     /**
      * 对列进行排序
@@ -446,6 +449,22 @@ export default {
       this.$refs.userEditForm.validate(valid => {
         if (valid) {
           // 如果验证通过就调用添加或者更新用户的接口
+          const params = { ...this.userEditForm }
+          // 使用md5加密传输密码（注释掉即为正常密码）
+          if (!params.password) {
+            delete params.password
+          } else {
+            params.password = md5(params.password)
+          }
+          axios.post('/users/addOneUser', params)
+            .then(response => {
+              console.log('success', response.data)
+            })
+            .catch(error => {
+              console.log('Error', error)
+            })
+          // const tempApi = this.userEditForm.id ? UserApi.updateUser : UserApi.addUser
+          this.userEditDialogVisible = false
         }
       })
     },
