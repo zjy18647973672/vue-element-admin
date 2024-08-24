@@ -9,7 +9,7 @@
         <el-input
           v-model="tableData.name"
           placeholder="请输入用户名称"
-          clearable=""
+          clearable
         />
         <!-- clearable表示一键清楚文本选项 -->
       </el-form-item>
@@ -143,7 +143,7 @@
         </el-form-item>
         <el-form-item label="角色" prop="roleIds">
           <!-- select下拉多选框 -->
-          <el-select v-model="userEditForm.roleIds" multiple placeholder="请选择角色">
+          <el-select v-model="userEditForm.roleIds" placeholder="请选择角色">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
         </el-form-item>
@@ -212,7 +212,7 @@ export default {
     return {
       tableData: {
         name: '',
-        minCreateTimer: '',
+        minCreateTime: '',
         maxCreateTime: '',
         list: [],
         selection: '',
@@ -250,16 +250,7 @@ export default {
       },
       userEditDialogVisible: false,
       userImportDialogVisible: false,
-      allRoles: [
-        {
-          id: 1,
-          name: 'jues'
-        },
-        {
-          id: 2,
-          name: 'jues1111111111111111e'
-        }
-      ], // 系统内角色列表
+      allRoles: [], // 系统内角色列表
       usercreateRules: {
         userName: [{ required: true, trigger: 'blur', validator: this.userNameValidator }],
         password: [{ required: true, trigger: 'change', validator: this.passwordValidator }],
@@ -274,11 +265,49 @@ export default {
     }
   },
   mounted() {
-    // 打开网页时默认获取用户列表
+    // 打开网页时默认获取用户、角色列表
     this.getUserList()
     this.getAllRoles()
   },
   methods: {
+    /**
+     *  获取用户列表
+     */
+    getUserList() {
+      // 学姐方法
+      // UserApi.getUsers(this.tableData).then(res => {
+      //   this.tableData.list = res.data.data.content
+      //   this.tableData.total = res.data.data.totalElements
+      //   // 更新头像
+      //   // this.$nextTick(() => {
+      //   //   this.tableData.list.forEach(row => {
+      //   //     this.getAvatar(row.id, row)
+      //   //   })
+      //   // })
+      // })
+      axios.get('/users/getUserList', {
+        params: {
+          userName: this.tableData.name, // 指定需要查找的用户名
+          minCreateTime: this.tableData.minCreateTime, // 指定需要查找的最小时间
+          maxCreateTime: this.tableData.maxCreateTime, // 指定需要查找的最大时间
+          pageNum: this.tableData.pageNum, // 指定检索的页码
+          pageSize: this.tableData.pageSize // 指定每页数据数
+        }
+      })
+        .then(response => {
+          // 连接后端数据，返回列表值，总数，页面数据数，当前页码
+          this.tableData.list = response.data.data.records
+          this.tableData.total = response.data.data.total
+          this.tableData.size = response.data.data.size
+          this.tableData.currentPage = response.data.data.currentPage
+        })
+        .catch(error => {
+          console.log(error = '从后端获取用户数据失败')
+        })
+    },
+    /**
+     * 获取角色列表
+     */
     getAllRoles() {
       axios.get('/roles/getRoleList')
         .then(response => {
@@ -327,38 +356,6 @@ export default {
       }
     },
     /**
-     *  获取用户列表
-     */
-    getUserList() {
-      // 学姐方法
-      // UserApi.getUsers(this.tableData).then(res => {
-      //   this.tableData.list = res.data.data.content
-      //   this.tableData.total = res.data.data.totalElements
-      //   // 更新头像
-      //   // this.$nextTick(() => {
-      //   //   this.tableData.list.forEach(row => {
-      //   //     this.getAvatar(row.id, row)
-      //   //   })
-      //   // })
-      // })
-      axios.get('/users/getUserList', {
-        params: {
-          pageNum: this.tableData.pageNum, // 指定检索的页码
-          pageSize: this.tableData.pageSize // 指定每页数据数
-        }
-      })
-        .then(response => {
-          // 连接后端数据，返回列表值，总数，页面数据数，当前页码
-          this.tableData.list = response.data.data.records
-          this.tableData.total = response.data.data.total
-          this.tableData.size = response.data.data.size
-          this.tableData.currentPage = response.data.data.currentPage
-        })
-        .catch(error => {
-          console.log(error = '从后端获取用户数据失败')
-        })
-    },
-    /**
      * 新增用户：使新增用户窗口出现
      */
     handleCreateUser() {
@@ -399,12 +396,19 @@ export default {
 
     },
     /**
-     * 编辑用户信息：将当前行传递进来，遍历表单，将数据传递进去
+     * 编辑用户信息：将当前行的信息传递进来，并进入编辑页面
      */
     handleEdit(row) {
+      this.currentEditRow = row
+      // 传入当前行信息，即当前用户的信息
       for (const key in this.userEditForm) {
         this.userEditForm[key] = row[key]
       }
+      this.userEditForm.roleIds = row.roleList ? row.roleList.map(item => {
+        const role = this.allRoles.find(role => role.name === item)
+        return role && role.id
+      }) : []
+      this.userEditForm.roleIds.filter(id => id)
       this.openUserEditDialog()
     },
     /**
@@ -422,10 +426,12 @@ export default {
       })
     },
     /**
-     * 重置
+     * 重置查询条件
      */
     resetQuery() {
-
+      this.tableData.name = ''
+      this.tableData.minCreateTime = ''
+      this.tableData.maxCreateTime = ''
     },
     /**
      * 对列进行排序
