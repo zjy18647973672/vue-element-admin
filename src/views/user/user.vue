@@ -405,10 +405,10 @@ export default {
         this.userEditForm[key] = row[key]
       }
       this.userEditForm.roleIds = row.roleList ? row.roleList.map(item => {
-        const role = this.allRoles.find(role => role.name === item.name)
-        return role.name
-      }) : []
-      this.userEditForm.roleIds.filter(name => name)
+        const role = this.allRoles.find(role => role.name === item)
+        return role && role.id
+      }) : ['s']
+      this.userEditForm.roleIds.filter(id => id)
       this.openUserEditDialog()
     },
     /**
