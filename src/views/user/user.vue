@@ -299,8 +299,8 @@ export default {
           // 连接后端数据，返回列表值，总数，页面数据数，当前页码
           this.tableData.list = response.data.data.records
           this.tableData.total = response.data.data.total
-          this.tableData.size = response.data.data.size
-          this.tableData.currentPage = response.data.data.currentPage
+          this.tableData.pageSize = response.data.data.size
+          this.tableData.currentPage = response.data.data.current
         })
         .catch(error => {
           console.log(error = '从后端获取用户数据失败')
