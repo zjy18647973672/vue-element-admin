@@ -407,7 +407,7 @@ export default {
       this.userEditForm.roleIds = row.roleList ? row.roleList.map(item => {
         const role = this.allRoles.find(role => role.name === item)
         return role && role.id
-      }) : ['s']
+      }) : []
       this.userEditForm.roleIds.filter(id => id)
       this.openUserEditDialog()
     },
@@ -447,7 +447,11 @@ export default {
       this.$refs.userEditForm.validate(valid => {
         if (valid) {
           // 如果验证通过就调用添加或者更新用户的接口
+          // 将编辑窗口的数据获取至params
           const params = { ...this.userEditForm }
+          // 获取角色Id（注，userEditForm没有roleIdList元素，但user中需要roleIdList元素，故手动添加params的roleIdList元素
+          params.roleIdList = params.roleIds
+          this.userEditForm.roleIds.filter(id => id)
           // 使用md5加密传输密码（注释掉即为正常密码）
           if (!params.password) {
             delete params.password
