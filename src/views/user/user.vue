@@ -324,13 +324,24 @@ export default {
       if (!value) {
         callback(new Error('请输入用户名'))
       } else if (this.userEditForm.id && value === this.currentEditRow.userName) {
+        // 编辑用户情况
         callback()
       } else {
         // 使用接口判断用户名是否重名
         // checkUserName(value).then(res => {
         //   callback(res.data.data ? new Error('用户名已存在') : undefined)
         // })
-        callback() //
+        axios.get('/users/checkUserName', {
+          params: {
+            userName: value
+          }
+        })
+          .then(response => {
+            callback(response.data.data ? new Error('用户名已存在') : undefined)
+          })
+          .catch(error => {
+            console.log(error = '从后端获取角色数据失败')
+          })
       }
     },
     /**
