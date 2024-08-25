@@ -454,13 +454,23 @@ export default {
           } else {
             params.password = md5(params.password)
           }
-          axios.post('/users/addOneUser', params)
-            .then(response => {
-              console.log('success', response.data)
-            })
-            .catch(error => {
-              console.log('Error', error)
-            })
+          if (this.userEditForm.id) {
+            axios.put('/users/updateUserInfo', params)
+              .then(response => {
+                console.log('success', response.data)
+              })
+              .catch(error => {
+                console.log('Error', error)
+              })
+          } else {
+            axios.post('/users/addOneUser', params)
+              .then(response => {
+                console.log('success', response.data)
+              })
+              .catch(error => {
+                console.log('Error', error)
+              })
+          }
           // const tempApi = this.userEditForm.id ? UserApi.updateUser : UserApi.addUser
           this.userEditDialogVisible = false
         }
