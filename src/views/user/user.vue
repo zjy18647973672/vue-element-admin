@@ -143,7 +143,7 @@
         </el-form-item>
         <el-form-item label="角色" prop="roleIds">
           <!-- select下拉多选框 -->
-          <el-select v-model="userEditForm.roleIds" placeholder="请选择角色">
+          <el-select v-model="userEditForm.roleIds" multiple placeholder="请选择角色">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
         </el-form-item>
@@ -299,8 +299,6 @@ export default {
           // 连接后端数据，返回列表值，总数，页面数据数，当前页码
           this.tableData.list = response.data.data.records
           this.tableData.total = response.data.data.total
-          this.tableData.pageSize = response.data.data.size
-          this.tableData.currentPage = response.data.data.current
         })
         .catch(error => {
           console.log(error = '从后端获取用户数据失败')
@@ -407,10 +405,10 @@ export default {
         this.userEditForm[key] = row[key]
       }
       this.userEditForm.roleIds = row.roleList ? row.roleList.map(item => {
-        const role = this.allRoles.find(role => role.name === item)
-        return role && role.name
+        const role = this.allRoles.find(role => role.name === item.name)
+        return role.name
       }) : []
-      this.userEditForm.roleIds.filter(id => id)
+      this.userEditForm.roleIds.filter(name => name)
       this.openUserEditDialog()
     },
     /**
