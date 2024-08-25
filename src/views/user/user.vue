@@ -332,7 +332,7 @@ export default {
         // checkUserName(value).then(res => {
         //   callback(res.data.data ? new Error('用户名已存在') : undefined)
         // })
-        callback() // 需判断重名！！！
+        callback() //
       }
     },
     /**
