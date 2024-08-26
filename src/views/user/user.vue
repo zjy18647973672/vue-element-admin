@@ -491,26 +491,27 @@ export default {
     /**
      * 对列进行排序
      */
-    handleSortChange() {
-      // 需添加参数传入指定的列以及排序方式以确定orderBy和orderMethods
-      // axios.get('/users/getUserList', {
-      //   params: {
-      //     userName: this.tableData.name, // 指定需要查找的用户名
-      //     minCreateTime: this.tableData.minCreateTime, // 指定需要查找的最小时间
-      //     maxCreateTime: this.tableData.maxCreateTime, // 指定需要查找的最大时间
-      //     orderBy: this.tableData.sortable
-      //     pageNum: this.tableData.pageNum, // 指定检索的页码
-      //     pageSize: this.tableData.pageSize // 指定每页数据数
-      //   }
-      // })
-      //   .then(response => {
-      //     // 连接后端数据，返回列表值，总数，页面数据数，当前页码
-      //     this.tableData.list = response.data.data.records
-      //     this.tableData.total = response.data.data.total
-      //   })
-      //   .catch(error => {
-      //     console.log(error = '从后端获取用户数据失败')
-      //   })
+    handleSortChange({ prop, order }) {
+      // 需添加参数传入指定的列以及排序方式以确定orderBy和orderMethods（注：未成功！！！）
+      axios.get('/users/getUserList', {
+        params: {
+          userName: this.tableData.name, // 指定需要查找的用户名
+          minCreateTime: this.tableData.minCreateTime, // 指定需要查找的最小时间
+          maxCreateTime: this.tableData.maxCreateTime, // 指定需要查找的最大时间
+          orderBy: prop,
+          orderMethod: order,
+          pageNum: this.tableData.pageNum, // 指定检索的页码
+          pageSize: this.tableData.pageSize // 指定每页数据数
+        }
+      })
+        .then(response => {
+          // 连接后端数据，返回列表值，总数，页面数据数，当前页码
+          this.tableData.list = response.data.data.records
+          this.tableData.total = response.data.data.total
+        })
+        .catch(error => {
+          console.log(error = '从后端获取用户数据失败')
+        })
     },
     /**
      * 添加或更新用户
