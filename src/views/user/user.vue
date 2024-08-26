@@ -171,8 +171,8 @@
     <el-dialog class="user-import-dialog" :title="' 导入用户'" :visible.sync="userImportDialogVisible" width="80%" top="8vh">
       <!-- 下载示例文件与上传文件按钮 -->
       <div>
-        <el-button type="primary" icon="el-icon-download" size="mini" @click="handleCreateUser">下载示例文件</el-button>
-        <el-button type="primary" size="mini" @click="handleBatchDelete">点击上传excel</el-button>
+        <el-button type="primary" icon="el-icon-download" size="mini" @click="handleDownloadModel">下载示例文件</el-button>
+        <el-button type="primary" size="mini" @click="handleUploadExcel">点击上传excel</el-button>
       </div>
 
       <!-- 导入文件内容 -->
@@ -392,7 +392,36 @@ export default {
      * 批量删除用户
      */
     handleBatchDelete() {
-      // 将tableData.seletion中的id提取出来，传递给handleDelete
+      if (!this.tableData.selection) {
+        this.$message.warning('请选择要删除的用户')
+        return // 退出函数，不执行删除操作
+      }
+
+      // 将tableData.selection中的id提取出来，传递给handleDelete
+      const idList = this.tableData.selection.map(item => item.id).join(',')
+      this.$confirm('此操作将永久删除用户，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 对接删除用户接口
+        axios.delete('/users/deleteUsers', {
+          params: {
+            ids: idList
+          }
+        })
+          .then(response => {
+            this.$message.success('删除用户成功')
+            console.log('success', response.data)
+            this.getUserList()
+          })
+          .catch(error => {
+            this.$message.warning('删除用户失败')
+            console.log(error = '删除用户失败')
+          })
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
     },
     /**
      * 导入用户
@@ -425,7 +454,7 @@ export default {
     /**
      * 删除用户信息（单个）
      */
-    handleDelete(userId) {
+    handleDelete(userIds) {
       this.$confirm('此操作将永久删除该用户，是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -434,14 +463,17 @@ export default {
         // 对接删除用户接口
         axios.delete('/users/deleteUsers', {
           params: {
-            id: userId
+            ids: userIds
           }
         })
           .then(response => {
-            console.log('success', userId)
+            this.$message.success('删除用户成功')
+            console.log('success', response.data)
+            this.getUserList()
           })
           .catch(error => {
-            console.log(error = '从后端获取角色数据失败')
+            this.$message.warning('删除用户失败')
+            console.log(error = '删除用户失败')
           })
       }).catch(() => {
         this.$message.info('已取消删除')
@@ -483,17 +515,23 @@ export default {
           if (this.userEditForm.id) {
             axios.put('/users/updateUserInfo', params)
               .then(response => {
+                this.$message.success('更新用户成功')
                 console.log('success', response.data)
+                this.getUserList()
               })
               .catch(error => {
+                this.$message.warning('更新用户失败')
                 console.log('Error', error)
               })
           } else {
             axios.post('/users/addOneUser', params)
               .then(response => {
+                this.$message.success('添加用户成功')
                 console.log('success', response.data)
+                this.getUserList()
               })
               .catch(error => {
+                this.$message.warning('添加用户失败')
                 console.log('Error', error)
               })
           }
@@ -506,6 +544,12 @@ export default {
 
     },
     importChosenUsers() {
+
+    },
+    handleDownloadModel() {
+
+    },
+    handleUploadExcel() {
 
     }
   }
