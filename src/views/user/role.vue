@@ -24,7 +24,6 @@
     <el-table
       :data="tableData.list"
       stripe
-      @sort-change="handleSortChange"
     >
       <!-- data表示表格数据（与tableData.list绑定），selection-change表示表格的批量操作，sort-change表示表格的排序操作，stripe设置样式带斑马纹 -->
       <el-table-column type="index" width="60" />
@@ -39,18 +38,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <!-- 分页 -->
-    <el-pagination
-      class="pagination"
-      :current-page.sync="tableData.currentPage"
-      :page-sizes="[10, 20, 30, 40]"
-      :page-size.sync="tableData.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="tableData.total"
-      @size-change="startPagination"
-      @current-change="startPagination"
-    />
 
     <!-- 用户编辑/创建窗口 -->
     <el-dialog class="role-edit-dialog" :title="roleEditForm.id ? ' 新增角色' : ' 角色编辑'" :visible.sync="roleEditDialogVisible" width="50%" top="8vh">
@@ -77,6 +64,7 @@
 </template>
 
 <script>
+import axios from '@/axios'
 export default {
   name: 'Roler',
   data() {
@@ -106,7 +94,23 @@ export default {
       roleEditDialogVisible: false
     }
   },
+  mounted() {
+    this.getRoleList()
+  },
   methods: {
+    /**
+     *  获取用户列表
+     */
+    getRoleList() {
+      axios.get('/roles/getRoleList')
+        .then(response => {
+          // 连接后端数据，返回列表值，总数，页面数据数，当前页码
+          this.tableData.list = response.data.data
+        })
+        .catch(error => {
+          console.log(error = '从后端获取用户数据失败')
+        })
+    },
     /**
      * 新增角色
      */
@@ -152,6 +156,9 @@ export default {
         this.roleEditForm[key] = row[key]
       }
       this.openRoleEditDialog()
+    },
+    addOrUpdateRole() {
+
     }
   }
 }
@@ -163,8 +170,7 @@ export default {
   margin-top: 10px;
 }
 .el-table {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px 5px;
 }
 .el-pagination {
   margin-left: 10px;
