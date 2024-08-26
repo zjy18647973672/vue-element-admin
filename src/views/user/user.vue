@@ -78,7 +78,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" icon="el-icon-delete" style="color: red;" @click="handleDelete([scope.row.id])">删除</el-button>
+          <el-button type="text" size="small" icon="el-icon-delete" style="color: red;" @click="handleDelete(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -425,13 +425,24 @@ export default {
     /**
      * 删除用户信息（单个）
      */
-    handleDelete(userIds) {
+    handleDelete(userId) {
       this.$confirm('此操作将永久删除该用户，是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         // 对接删除用户接口
+        axios.delete('/users/deleteUsers', {
+          params: {
+            id: userId
+          }
+        })
+          .then(response => {
+            console.log('success', userId)
+          })
+          .catch(error => {
+            console.log(error = '从后端获取角色数据失败')
+          })
       }).catch(() => {
         this.$message.info('已取消删除')
       })
